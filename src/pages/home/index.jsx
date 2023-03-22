@@ -1,7 +1,9 @@
 import './index.css'
+import { Menu } from './menu';
 import { useEffect, useState } from 'react';
 import { getPosts } from '../../services';
 import ReactPaginate from 'react-paginate';
+import { FaUser } from 'react-icons/fa';
 
 export const Home = () => {
 	const [posts, setPosts] = useState([]);
@@ -25,13 +27,15 @@ export const Home = () => {
 	const displayedPosts = posts.slice(currentPage * 4, currentPage * 4 + 4);
 
 	return (
+		<>
+		<Menu />
 		<div className='home-container'>
-			<h1 className='post-title'>Posts</h1>
 			<div className='posts-grid'>
 				{displayedPosts.map((post) => (
 					<div key={post.id} className='post-container'>
 						<h2 className='post-title'>{post.title}</h2>
 						<p className='post-body'>{post.body}</p>
+						<p className='post-author'>Autor: <FaUser /> {post.userId}</p>
 					</div>
 				))}
 				</div>
@@ -47,5 +51,6 @@ export const Home = () => {
 					activeClassName={'active'}
 				/>
 		</div>
+		</>
 	);
 }
