@@ -1,6 +1,6 @@
 import './section.css'
 import ReactPaginate from 'react-paginate';
-import { useContext, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { getPosts } from '../../services';
 import { FaUser } from 'react-icons/fa';
 import { useModalStore } from '../../zustand/hooks/modais/modalContext.tsx';
@@ -10,27 +10,29 @@ export const Section = () => {
 	const [currentPost, setCurrentPost] = useState(null);
 	const [posts, setPosts] = useState([]);
 	const [currentPage, setCurrentPage] = useState(0);
-	const	isOpen = useModalStore(state => state.isOpen);
-	const	setIsOpen  = useModalStore(state => state.setIsOpen);
+	const { isOpen, setIsOpen } = useModalStore();
 
-	async function fetchPosts () {
-		const data = await getPosts();
-		setPosts(data);
-	};
-	fetchPosts();
-
+	useEffect(() => {
+		async function fetchPosts() {
+			const data = await getPosts();
+			setPosts(data);
+		}; fetchPosts();
+	}, [])
 
 	const handlePageChange = (selectedPage) => {
 		setCurrentPage(selectedPage.selected);
 	};
 
-	function openModal() {
+	const openModal = useCallback(() => {
 		setIsOpen(true);
-		console.log(isOpen)
-	}
+	}, [setIsOpen]);
 
-	const displayedPosts = posts.slice(currentPage * 4, currentPage * 4 + 4);
+	const displayedPosts = useMemo(
+		() => posts.slice(currentPage * 4, currentPage * 4 + 4),
+		[currentPage, posts]
+	);
 
+	console.log("Linha 33")
 	return (
 		<div className='section'>
 			<div className='home-container'>
@@ -44,10 +46,10 @@ export const Section = () => {
 								<li><p>
 									<a className='openModal' onClick={() => {
 										setCurrentPost(post);
-										openModal()}}>Ver Mais</a>
+										openModal()
+									}}>Ver Mais</a>
 								</p></li>
 							</ul>
-
 						</div>
 					))}
 				</div>
@@ -67,7 +69,7 @@ export const Section = () => {
 			<div className='title-second-section'>
 				<h1>Posts mais comentados</h1>
 			</div>
-			{isOpen && <PostModal post={currentPost}/>}
+			{isOpen && <PostModal post={currentPost} />}
 		</div>
 	);
 }

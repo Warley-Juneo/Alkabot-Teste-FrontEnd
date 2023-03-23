@@ -4,8 +4,8 @@ import { Section } from "./section";
 export const Home = () => {
 	return (
 		<>
-				<Menu />
-				<Section />
+			<Menu />
+			<Section />
 		</>
 	);
 }
